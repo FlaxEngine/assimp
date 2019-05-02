@@ -23,7 +23,11 @@ if(MSVC)
   else()
     set(MSVC_PREFIX "vc150")
   endif()
-  set(ASSIMP_LIBRARY_SUFFIX "@ASSIMP_LIBRARY_SUFFIX@-${MSVC_PREFIX}-mt" CACHE STRING "the suffix for the assimp windows library" )
+  if( BUILD_DYNAMIC_MSVC )
+    set(ASSIMP_LIBRARY_SUFFIX "@ASSIMP_LIBRARY_SUFFIX@-${MSVC_PREFIX}-md" CACHE STRING "the suffix for the assimp windows library" )
+  else()
+    set(ASSIMP_LIBRARY_SUFFIX "@ASSIMP_LIBRARY_SUFFIX@-${MSVC_PREFIX}-mt" CACHE STRING "the suffix for the assimp windows library" )
+  endif()
 
   set(sharedLibraryName "assimp${ASSIMP_LIBRARY_SUFFIX}@CMAKE_DEBUG_POSTFIX@@CMAKE_SHARED_LIBRARY_SUFFIX@")
   set(importLibraryName "assimp${ASSIMP_LIBRARY_SUFFIX}@CMAKE_DEBUG_POSTFIX@@CMAKE_IMPORT_LIBRARY_SUFFIX@")
@@ -65,6 +69,14 @@ set( ASSIMP_LIBRARIES ${sharedLibraryName})
 # for compatibility with pkg-config
 set(ASSIMP_CFLAGS_OTHER "${ASSIMP_CXX_FLAGS}")
 set(ASSIMP_LDFLAGS_OTHER "${ASSIMP_LINK_FLAGS}")
+
+if(MSVC)
+  if( BUILD_DYNAMIC_MSVC )
+    set(ASSIMP_CXX_FLAGS "${ASSIMP_CXX_FLAGS} /MDd")
+  else()
+    set(ASSIMP_CXX_FLAGS "${ASSIMP_CXX_FLAGS} /MTd")
+  endif()
+endif()
 
 MARK_AS_ADVANCED(
   ASSIMP_ROOT_DIR
